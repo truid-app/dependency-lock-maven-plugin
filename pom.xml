@@ -10,9 +10,9 @@
   <description>Maven plugin that makes sure that Maven dependency are not accidentally changed.</description>
   <url>https://github.com/vandmo/dependency-lock-maven-plugin</url>
 
-  <groupId>se.vandmo</groupId>
+  <groupId>me.veritru.ci</groupId>
   <artifactId>dependency-lock-maven-plugin</artifactId>
-  <version>0-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
 
@@ -275,6 +275,14 @@
   </dependencies>
 
   <build>
+    <extensions>
+      <extension>
+        <groupId>com.google.cloud.artifactregistry</groupId>
+        <artifactId>artifactregistry-maven-wagon</artifactId>
+        <version>2.1.4</version>
+      </extension>
+    </extensions>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -374,17 +382,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>${nexus-staging-maven-plugin.version}</version>
-        <extensions>true</extensions>
-        <configuration>
-          <serverId>ossrh</serverId>
-          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-          <autoReleaseAfterClose>true</autoReleaseAfterClose>
-        </configuration>
-      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
@@ -406,19 +403,16 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>${maven-deploy-plugin.version}</version>
-          <configuration>
-            <skip>true</skip>
-          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
   </build>
 
   <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
+    <repository>
+      <id>artifact-registry</id>
+      <url>artifactregistry://europe-north1-maven.pkg.dev/veritru-dev-332314/maven-inhouse</url>
+    </repository>
   </distributionManagement>
 
   <scm>
