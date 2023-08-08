@@ -1,5 +1,7 @@
 package se.vandmo.dependencylock.maven;
 
+import org.apache.maven.project.MavenProject;
+
 import static java.util.Collections.sort;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
@@ -20,9 +22,28 @@ public final class Artifacts implements Iterable<Artifact> {
     this.artifacts = unmodifiableList(copy);
   }
 
+  private static Boolean matchArtifact(org.apache.maven.artifact.Artifact a, MavenProject p) {
+    return (
+      a.getArtifactId().equals(p.getModel().getArtifactId()) &&
+      a.getGroupId().equals(p.getModel().getGroupId())
+    );
+  }
+
   public static Artifacts fromMavenArtifacts(
-      Collection<org.apache.maven.artifact.Artifact> artifacts) {
-    return new Artifacts(artifacts.stream().map(a -> Artifact.from(a)).collect(toList()));
+    Collection<org.apache.maven.artifact.Artifact> artifacts,
+    Collection<MavenProject> reactorProjects,
+    Boolean excludeReactor
+  ) {
+    if (excludeReactor) {
+      return new Artifacts(
+        artifacts.stream()
+          .filter(a -> reactorProjects.stream().noneMatch(p -> matchArtifact(a, p)))
+          .map(a -> Artifact.from(a))
+          .collect(toList())
+      );
+    } else {
+      return new Artifacts(artifacts.stream().map(a -> Artifact.from(a)).collect(toList()));
+    }
   }
 
   public static Artifacts fromArtifacts(Collection<Artifact> artifacts) {
