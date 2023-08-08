@@ -22,8 +22,16 @@ public final class CheckMojo extends AbstractDependencyLockMojo {
 
   @Parameter private DependencySet[] dependencySets = new DependencySet[0];
 
+  @Parameter(property = "skipLockCheck")
+  private Boolean skip = false;
+
   @Override
   public void execute() throws MojoExecutionException {
+    if (skip) {
+      getLog().info("skipping check");
+      return;
+    }
+
     DependenciesLockFileAccessor lockFile = lockFile();
     if (!lockFile.exists()) {
       throw new MojoExecutionException(
