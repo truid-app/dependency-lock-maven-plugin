@@ -9,21 +9,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public final class Checksum {
-  private static final MessageDigest SHA512_DIGEST;
-
   /**
    * The current algorithm that is being used. If this doesn't match an error will be thrown and
    * dependency files need to be regenerated.
    */
   public static final String ALGORITHM_HEADER = "sha512:";
-
-  static {
-    try {
-      SHA512_DIGEST = MessageDigest.getInstance("SHA-512");
-    } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
-    }
-  }
 
   public static String calculateFor(File file) {
     try {
@@ -34,7 +24,12 @@ public final class Checksum {
   }
 
   static String calculateFor(byte[] bytes) {
-    byte[] hashed = SHA512_DIGEST.digest(bytes);
-    return ALGORITHM_HEADER + Base64.getEncoder().encodeToString(hashed);
+    try {
+      MessageDigest SHA512_DIGEST = MessageDigest.getInstance("SHA-512");
+      byte[] hashed = SHA512_DIGEST.digest(bytes);
+      return ALGORITHM_HEADER + Base64.getEncoder().encodeToString(hashed);
+    } catch (NoSuchAlgorithmException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
