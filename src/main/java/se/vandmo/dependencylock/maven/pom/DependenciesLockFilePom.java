@@ -48,6 +48,7 @@ public final class DependenciesLockFilePom implements DependenciesLockFile {
       Template template = cfg.getTemplate("pom.ftlx");
       try (Writer writer = dependenciesLockFile.writer()) {
         template.process(makeDataModel(pomMinimums, projectDependencies), writer);
+        PomSchemaFiles.place(dependenciesLockFile.parentDir());
       }
     } catch (IOException | TemplateException e) {
       throw new RuntimeException(e);

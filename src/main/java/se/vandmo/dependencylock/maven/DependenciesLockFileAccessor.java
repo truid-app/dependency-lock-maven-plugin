@@ -46,6 +46,10 @@ public final class DependenciesLockFileAccessor {
     return file.exists();
   }
 
+  public File parentDir() {
+    return file.getParentFile();
+  }
+
   public String filename() {
     return file.getAbsolutePath();
   }
